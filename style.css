@@ -1,0 +1,54 @@
+/* ---- Style global et responsive ---- */
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:'Segoe UI',sans-serif;
+  background:#8b0000 url('https://www.google.com/url?sa=i&url=https%3A%2F%2Ffr.dreamstime.com%2Fl%25C3%25A8vres-sexy-bouche-langage-fraises-isol%25C3%25A9e-fond-rouge-image202503678&psig=AOvVaw0iFsNIbZSnqzzBl1xx_w2G&ust=1750628183333000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCMj2mLO8g44DFQAAAAAdAAAAABAE') center/cover no-repeat;
+  color:#fff;
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:10px;
+}
+/* Cartes centrées (login et app) */
+#login,#app{
+  background:rgba(0,0,0,.6);
+  padding:30px 20px 40px;
+  border-radius:20px;
+  width:100%;
+  max-width:500px;
+  text-align:center;
+  box-shadow:0 0 20px rgba(255,255,255,.3);
+}
+input[type=password],input[type=file]{
+  width:80%;padding:10px;margin:10px 0;border:none;border-radius:10px;
+}
+button{
+  background:#ff4081;border:none;color:#fff;padding:10px 22px;margin-top:10px;
+  border-radius:22px;font-size:1rem;cursor:pointer;transition:.3s;
+}
+button:hover{background:#ff1a6d}
+/* Liste & gage */
+ul{list-style:none;padding:0;margin:0}
+li{margin-bottom:18px}
+.done{opacity:.6;text-decoration:line-through;font-style:italic}
+img{max-width:100%;height:auto;border-radius:12px;margin-top:10px}
+
+/* ---- Pop-up modal ---- */
+#modal{position:fixed;inset:0;display:flex;justify-content:center;align-items:center;background:rgba(0,0,0,.85);z-index:999}
+#modalContent{
+  position:relative;background:rgba(0,0,0,.65);padding:30px 20px 40px;color:#fff;
+  border-radius:20px;max-width:400px;width:90%;text-align:center;
+}
+#modalContent .back{
+  position:absolute;top:8px;left:8px;background:none;border:none;
+  color:#fff;font-size:32px;cursor:pointer;
+}
+
+/* ---- Petits écrans ---- */
+@media(max-width:600px){
+  button{font-size:.9rem;padding:9px 16px}
+  h1{font-size:1.4rem}
+  h2{font-size:1.2rem}
+}
