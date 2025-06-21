@@ -1,0 +1,105 @@
+body {
+  font-family: 'Segoe UI', sans-serif;
+  margin: 0;
+  padding: 0;
+  background: #8b0000;
+  background-image: url('https://www.google.com/url?sa=i&url=https%3A%2F%2Ffr.dreamstime.com%2Fl%25C3%25A8vres-sexy-bouche-langage-fraises-isol%25C3%25A9e-fond-rouge-image202503678&psig=AOvVaw0iFsNIbZSnqzzBl1xx_w2G&ust=1750628183333000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCMj2mLO8g44DFQAAAAAdAAAAABAE');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  color: #fff;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#login, #app {
+  background: rgba(0, 0, 0, 0.6);
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+  text-align: center;
+  max-width: 500px;
+  width: 90%;
+}
+
+input[type="password"], input[type="file"] {
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  margin: 10px 0;
+  width: 80%;
+}
+
+button {
+  background-color: #ff4081;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  margin-top: 10px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: 0.3s ease;
+}
+
+button:hover {
+  background-color: #ff1a6d;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  margin-bottom: 20px;
+}
+
+.done {
+  opacity: 0.6;
+  text-decoration: line-through;
+  font-style: italic;
+}
+
+img {
+  border-radius: 12px;
+  margin-top: 10px;
+  max-width: 100%;
+  height: auto;
+}
+/* … ton style existant … */
+
+/* --- Pop-up romantique --- */
+#modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.8);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  z-index:999;
+}
+#modalContent{
+  background:rgba(0,0,0,.6);
+  padding:30px 20px 40px;
+  border-radius:20px;
+  max-width:400px;
+  width:90%;
+  color:#fff;
+  text-align:center;
+  position:relative;
+}
+#modalContent .back{
+  position:absolute;
+  top:8px;left:8px;
+  background:transparent;
+  border:none;
+  font-size:32px;
+  color:#fff;
+  cursor:pointer;
+}
+#modalContent button{
+  margin-top:12px;
+}

@@ -1,0 +1,19 @@
+<div id="login">
+  <h2>Connecte-toi mon petit kinder surprise❤️</h2>
+  <input type="password" id="password" placeholder="Mot de passe">
+  <button onclick="login()">Entrer</button>
+</div>
+
+<div id="app" style="display: none;">
+  <h1>Liste des gages 🥰</h1>
+  <ul id="gageList"></ul>
+</div>
+<!-- Pop-up / modal -->
+<div id="modal" style="display:none;">
+  <div id="modalContent"></div>
+</div>
+<div id="filters" style="margin-bottom:20px;">
+  <button onclick="setFilter('all')">Tous</button>
+  <button onclick="setFilter('tranquille')">Tranquilles</button>
+  <button onclick="setFilter('hot')">Hot</button>
+</div>
