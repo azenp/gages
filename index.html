@@ -9,7 +9,7 @@
       margin: 0;
       font-family: 'Arial', sans-serif;
       background-color: #ffe6e6;
-      background-image: url('https://www.google.com/imgres?q=kiss%20lips&imgurl=https%3A%2F%2Fimages.theconversation.com%2Ffiles%2F65006%2Foriginal%2Fimage-20141119-31615-1g3eez.jpg%3Fixlib%3Drb-4.1.0%26rect%3D107%252C7%252C916%252C631%26q%3D45%26auto%3Dformat%26w%3D926%26fit%3Dclip&imgrefurl=https%3A%2F%2Ftheconversation.com%2Flips-are-the-most-exposed-erogenous-zone-which-makes-kissing-feel-very-good-34459&docid=PFsNFtdcVY6ynM&tbnid=6FBN61RjI6jTcM&vet=12ahUKEwjRn_yuroWOAxW5TKQEHU8OBxgQM3oECD4QAA..i&w=926&h=638&hcb=2&ved=2ahUKEwjRn_yuroWOAxW5TKQEHU8OBxgQM3oECD4QAA'); /* empreintes lèvres */
+      background-image: url('https://i.imgur.com/LpRgd1S.png');
       background-size: cover;
       color: #600;
       text-align: center;
@@ -22,6 +22,7 @@
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
       cursor: pointer;
       transition: transform 0.2s;
+      position: relative;
     }
     .gage:hover {
       transform: scale(1.03);
@@ -29,7 +30,6 @@
     .gage.grise {
       background: #eee;
       color: #999;
-      pointer-events: none;
     }
     .gage img {
       max-width: 100px;
@@ -53,6 +53,9 @@
     }
     button:hover {
       background-color: #ad2954;
+    }
+    .options {
+      margin-top: 1em;
     }
   </style>
 </head>
@@ -94,39 +97,56 @@
         gageDiv.className = "gage" + (gage.fait ? " grise" : "");
         gageDiv.innerHTML = `
           <p>${gage.texte}</p>
-          <input type="file" accept="image/*" class="photo-input ${gage.fait ? 'hidden' : ''}" data-index="${index}" />
-          <button data-index="${index}" class="valider ${gage.fait ? 'hidden' : ''}">Valider</button>
+          <div class="options hidden">
+            <input type="file" accept="image/*" class="photo-input" data-index="${index}" />
+            <button data-index="${index}" class="valider">Valider</button>
+            <button data-index="${index}" class="reset">Réinitialiser</button>
+          </div>
           ${gage.photo ? `<img src="${gage.photo}" alt="Photo" />` : ""}
         `;
+        gageDiv.addEventListener("click", (e) => {
+          if (e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT') return;
+          const options = gageDiv.querySelector('.options');
+          document.querySelectorAll('.options').forEach(opt => opt.classList.add('hidden'));
+          options.classList.remove('hidden');
+        });
         gagesContainer.appendChild(gageDiv);
       });
     }
 
     gagesContainer.addEventListener("click", (e) => {
+      const index = parseInt(e.target.getAttribute("data-index"));
+      const gage = gages[index];
       if (e.target.classList.contains("valider")) {
-        const index = parseInt(e.target.getAttribute("data-index"));
         const input = document.querySelector(`.photo-input[data-index='${index}']`);
         const file = input.files[0];
-
         if (!file) {
           if (!confirm("Aucune photo ajoutée. Es-tu sûr(e) de vouloir valider ?")) return;
         }
-
         const reader = new FileReader();
         reader.onload = function(evt) {
-          gages[index].fait = true;
-          gages[index].photo = file ? evt.target.result : null;
+          gage.fait = true;
+          gage.photo = file ? evt.target.result : null;
           sauvegarder();
           afficherGages();
         };
-
-        if (file) {
-          reader.readAsDataURL(file);
-        } else {
-          gages[index].fait = true;
-          gages[index].photo = null;
+        if (file) reader.readAsDataURL(file);
+        else {
+          gage.fait = true;
+          gage.photo = null;
           sauvegarder();
           afficherGages();
+        }
+      }
+      if (e.target.classList.contains("reset")) {
+        const code = prompt("Code pour réinitialiser ?");
+        if (code === "josephine") {
+          gage.fait = false;
+          gage.photo = null;
+          sauvegarder();
+          afficherGages();
+        } else {
+          alert("Code incorrect");
         }
       }
     });
