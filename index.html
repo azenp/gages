@@ -9,10 +9,23 @@
       margin: 0;
       font-family: 'Arial', sans-serif;
       background-color: #ffe6e6;
-      background-image: url('https://i.imgur.com/LpRgd1S.png');
+      background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSmX9qIEOteY3nBLJZyBEj24eGwtd1QLd6wEA&s');
       background-size: cover;
       color: #600;
       text-align: center;
+    }
+    #codeSection {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(255, 230, 230, 0.95);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
     }
     .gage {
       background: white;
@@ -38,9 +51,10 @@
     .hidden {
       display: none;
     }
-    input[type="file"] {
+    input[type="file"], input[type="password"] {
       display: block;
       margin: 1em auto;
+      padding: 0.5em;
     }
     button {
       padding: 0.5em 1em;
@@ -60,8 +74,14 @@
   </style>
 </head>
 <body>
-  <h1>Mes Gages pour Toi ❤️</h1>
-  <div id="gages"></div>
+  <div id="codeSection">
+    <h2>Entre ton code secret 💘</h2>
+    <input type="password" id="codeInput" placeholder="Code..." />
+    <button onclick="verifierCode()">Entrer</button>
+  </div>
+
+  <h1 class="hidden" id="titre">Mes Gages pour Toi ❤️</h1>
+  <div id="gages" class="hidden"></div>
 
   <script>
     const gages = [
@@ -72,6 +92,19 @@
     ];
 
     const gagesContainer = document.getElementById("gages");
+    const titre = document.getElementById("titre");
+    const codeSection = document.getElementById("codeSection");
+
+    function verifierCode() {
+      const code = document.getElementById("codeInput").value;
+      if (code === "soft" || code === "hot") {
+        codeSection.style.display = "none";
+        titre.classList.remove("hidden");
+        gagesContainer.classList.remove("hidden");
+      } else {
+        alert("Code incorrect !");
+      }
+    }
 
     function sauvegarder() {
       localStorage.setItem("gages", JSON.stringify(gages));
@@ -101,6 +134,7 @@
             <input type="file" accept="image/*" class="photo-input" data-index="${index}" />
             <button data-index="${index}" class="valider">Valider</button>
             <button data-index="${index}" class="reset">Réinitialiser</button>
+            <button onclick="retourAccueil()">⬅ Retour</button>
           </div>
           ${gage.photo ? `<img src="${gage.photo}" alt="Photo" />` : ""}
         `;
@@ -112,6 +146,10 @@
         });
         gagesContainer.appendChild(gageDiv);
       });
+    }
+
+    function retourAccueil() {
+      document.querySelectorAll('.options').forEach(opt => opt.classList.add('hidden'));
     }
 
     gagesContainer.addEventListener("click", (e) => {
