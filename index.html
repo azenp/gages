@@ -2,213 +2,29 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Gages d'Amour</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Arial', sans-serif;
-      background: #ffe6e6 url("https://i.imgur.com/LpRgd1S.png") center/cover no-repeat;
-      color: #600;
-      text-align: center;
-    }
-    #codeSection {
-      position: fixed;
-      inset: 0;
-      background: rgba(255,230,230,0.95);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      z-index: 999;
-    }
-    #codeSection input {
-      padding: 0.6em;
-      margin-top: 1em;
-    }
-    .hidden {
-      display: none;
-    }
-    .gage {
-      background: white;
-      margin: 1em;
-      padding: 1em;
-      border-radius: 20px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      cursor: pointer;
-      transition: transform 0.2s;
-      position: relative;
-    }
-    .gage:hover {
-      transform: scale(1.03);
-    }
-    .gage.grise {
-      background: #eee;
-      color: #999;
-      pointer-events: none;
-    }
-    .gage img {
-      max-width: 100px;
-      margin-top: 10px;
-      border-radius: 8px;
-    }
-    input[type="file"] {
-      display: block;
-      margin: 1em auto;
-    }
-    button {
-      padding: 0.5em 1.2em;
-      margin: 0.3em;
-      background-color: #d6336c;
-      border: none;
-      color: white;
-      border-radius: 10px;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #ad2954;
-    }
-    .options {
-      margin-top: 1em;
-    }
-    @media(max-width:600px){
-      .gage{margin:.6em;padding:.8em}
-      button{padding:.5em 1em;font-size:.9rem}
-    }
-  </style>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <section id="codeSection">
-    <h2>Entre ton code secret 💘</h2>
-    <input type="password" id="codeInput" placeholder="Code..." />
-    <button id="btnLogin">Entrer</button>
-  </section>
+  <div id="login-screen">
+    <h1>Bienvenue ❤️</h1>
+    <p>Entrez le code secret :</p>
+    <input type="text" id="code-input" placeholder="Code secret" autocomplete="off" />
+    <button id="code-btn">Valider</button>
+    <p id="code-error" class="error hidden">Code invalide, réessaye.</p>
+  </div>
 
-  <h1 id="titre" class="hidden">Mes Gages pour Toi ❤️</h1>
-  <button id="btnRetour" class="hidden">🔐 Retour à l'accueil</button>
-  <div id="gages" class="hidden"></div>
+  <div id="main-screen" class="hidden">
+    <h1>Mes Gages pour Toi ❤️</h1>
+    <div id="gages"></div>
+  </div>
 
-  <script>
-    const allGages = {
-      soft: [
-        { texte: "Un massage de 10 minutes" },
-        { texte: "Un bisou dans le cou" },
-      ],
-      hot: [
-        { texte: "Danser collés serrés 2 minutes" },
-        { texte: "Lécher la joue pendant 10 secondes" },
-      ]
-    };
+  <div id="gage-popup" class="hidden">
+    <button id="back-btn">&larr; Retour</button>
+    <div id="gage-content"></div>
+  </div>
 
-    let gages = [];
-    const LS_KEY = "gages-love";
-
-    const codeSection = document.getElementById("codeSection");
-    const codeInput = document.getElementById("codeInput");
-    const btnLogin = document.getElementById("btnLogin");
-    const titre = document.getElementById("titre");
-    const gagesContainer = document.getElementById("gages");
-    const btnRetour = document.getElementById("btnRetour");
-
-    btnLogin.addEventListener("click", () => {
-      const code = codeInput.value.trim().toLowerCase();
-      if (allGages[code]) {
-        gages = allGages[code].map(g => ({...g, fait: false, photo: null}));
-        charger();
-        codeSection.classList.add("hidden");
-        titre.classList.remove("hidden");
-        gagesContainer.classList.remove("hidden");
-        btnRetour.classList.remove("hidden");
-        afficherGages();
-      } else {
-        alert("Code incorrect !");
-      }
-    });
-
-    btnRetour.addEventListener("click", () => {
-      localStorage.removeItem(LS_KEY);
-      location.reload();
-    });
-
-    function sauvegarder() {
-      localStorage.setItem(LS_KEY, JSON.stringify(gages));
-    }
-
-    function charger() {
-      const data = localStorage.getItem(LS_KEY);
-      if (data) {
-        const saved = JSON.parse(data);
-        saved.forEach((g, i) => Object.assign(gages[i], g));
-      }
-    }
-
-    function afficherGages() {
-      gagesContainer.innerHTML = "";
-      gages.forEach((g, index) => {
-        const div = document.createElement("div");
-        div.className = "gage" + (g.fait ? " grise" : "");
-        div.innerHTML = `
-          <p>${g.texte}</p>
-          <div class="options hidden">
-            <input type="file" accept="image/*" class="photo-input" data-index="${index}" />
-            <button data-index="${index}" class="valider">Valider</button>
-            <button data-index="${index}" class="reset">Réinitialiser</button>
-            <button class="retour">⬅ Retour</button>
-          </div>
-          ${g.photo ? `<img src="${g.photo}" alt="Photo" />` : ""}
-        `;
-        div.addEventListener("click", (e) => {
-          const options = div.querySelector('.options');
-          if (e.target.classList.contains("retour")) {
-            options.classList.add("hidden");
-          } else if (!e.target.classList.contains("valider") && !e.target.classList.contains("reset")) {
-            document.querySelectorAll('.options').forEach(opt => opt.classList.add('hidden'));
-            options.classList.remove('hidden');
-          }
-        });
-        gagesContainer.appendChild(div);
-      });
-    }
-
-    gagesContainer.addEventListener("click", (e) => {
-      const index = parseInt(e.target.getAttribute("data-index"));
-      if (isNaN(index)) return;
-      const g = gages[index];
-
-      if (e.target.classList.contains("valider")) {
-        const input = document.querySelector(`.photo-input[data-index='${index}']`);
-        const file = input.files[0];
-        if (!file && !confirm("Aucune photo ajoutée. Valider quand même ?")) return;
-
-        if (file) {
-          const reader = new FileReader();
-          reader.onload = function(evt) {
-            g.fait = true;
-            g.photo = evt.target.result;
-            sauvegarder();
-            afficherGages();
-          };
-          reader.readAsDataURL(file);
-        } else {
-          g.fait = true;
-          g.photo = null;
-          sauvegarder();
-          afficherGages();
-        }
-      }
-
-      if (e.target.classList.contains("reset")) {
-        const code = prompt("Code pour réinitialiser ?");
-        if (code === "josephine") {
-          g.fait = false;
-          g.photo = null;
-          sauvegarder();
-          afficherGages();
-        } else {
-          alert("Code incorrect");
-        }
-      }
-    });
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
