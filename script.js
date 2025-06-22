@@ -25,8 +25,8 @@ let listeKey  = "";     // 'tranquilles' ou 'hot'
 function login() {
   const code = document.getElementById("password").value.trim().toLowerCase();
 
-  if (code === "boulogne")      listeKey = "tranquilles";
-  else if (code === "apt") listeKey = "hot";
+  if (code === "amour")      listeKey = "tranquilles";
+  else if (code === "passion") listeKey = "hot";
   else { alert("Mot de passe incorrect 😢\n(pense à « la ville ou on eu notre first kiss » ou « la musique qui nous a marquer pour notres premier fois »)"); return; }
 
   // on fait une copie propre pour ne pas toucher aux listes originales
