@@ -1,45 +1,138 @@
 <!DOCTYPE html>
-<html lang="en" >
-<head>
-  <meta charset="UTF-8">
-  <title>Untitled</title>
-  <link rel="stylesheet" href="./style.css">
-
-</head>
-<body>
-<!-- partial:index.partial.html -->
-<!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nos gages d’amour ❤️</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gages d'Amour</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Arial', sans-serif;
+      background-color: #ffe6e6;
+      background-image: url('https://i.imgur.com/LpRgd1S.png'); /* empreintes lèvres */
+      background-size: cover;
+      color: #600;
+      text-align: center;
+    }
+    .gage {
+      background: white;
+      margin: 1em;
+      padding: 1em;
+      border-radius: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .gage:hover {
+      transform: scale(1.03);
+    }
+    .gage.grise {
+      background: #eee;
+      color: #999;
+      pointer-events: none;
+    }
+    .gage img {
+      max-width: 100px;
+      margin-top: 10px;
+    }
+    .hidden {
+      display: none;
+    }
+    input[type="file"] {
+      display: block;
+      margin: 1em auto;
+    }
+    button {
+      padding: 0.5em 1em;
+      margin-top: 0.5em;
+      background-color: #d6336c;
+      border: none;
+      color: white;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #ad2954;
+    }
+  </style>
 </head>
 <body>
-  <!-- Écran de connexion -->
-  <div id="login">
-    <h2>Connecte-toi mon❤️</h2>
-    <input type="password" id="password" placeholder="Mot de passe">
-    <button onclick="login()">Entrer</button>
-  </div>
+  <h1>Mes Gages pour Toi ❤️</h1>
+  <div id="gages"></div>
 
-  <!-- Application principale (cachée avant login) -->
-  <div id="app" style="display:none;">
-    <h1 id="titreListe"></h1>
-    <ul id="gageList"></ul>
-  </div>
+  <script>
+    const gages = [
+      { texte: "Un massage de 10 minutes", type: "soft" },
+      { texte: "Un bisou dans le cou", type: "soft" },
+      { texte: "Danser collés serrés 2 minutes", type: "hot" },
+      { texte: "Lécher la joue pendant 10 secondes", type: "hot" },
+    ];
 
-  <!-- Pop-up plein-écran -->
-  <div id="modal" style="display:none;">
-    <div id="modalContent"></div>
-  </div>
+    const gagesContainer = document.getElementById("gages");
 
-  <script src="script.js"></script>
-</body>
-</html>
-<!-- partial -->
-  <script  src="./script.js"></script>
+    function sauvegarder() {
+      localStorage.setItem("gages", JSON.stringify(gages));
+    }
 
+    function chargerPhotos() {
+      const data = localStorage.getItem("gages");
+      if (data) {
+        const anciens = JSON.parse(data);
+        anciens.forEach((old, i) => {
+          if (old.fait) {
+            gages[i].fait = true;
+            gages[i].photo = old.photo;
+          }
+        });
+      }
+    }
+
+    function afficherGages() {
+      gagesContainer.innerHTML = "";
+      gages.forEach((gage, index) => {
+        const gageDiv = document.createElement("div");
+        gageDiv.className = "gage" + (gage.fait ? " grise" : "");
+        gageDiv.innerHTML = `
+          <p>${gage.texte}</p>
+          <input type="file" accept="image/*" class="photo-input ${gage.fait ? 'hidden' : ''}" data-index="${index}" />
+          <button data-index="${index}" class="valider ${gage.fait ? 'hidden' : ''}">Valider</button>
+          ${gage.photo ? `<img src="${gage.photo}" alt="Photo" />` : ""}
+        `;
+        gagesContainer.appendChild(gageDiv);
+      });
+    }
+
+    gagesContainer.addEventListener("click", (e) => {
+      if (e.target.classList.contains("valider")) {
+        const index = parseInt(e.target.getAttribute("data-index"));
+        const input = document.querySelector(`.photo-input[data-index='${index}']`);
+        const file = input.files[0];
+
+        if (!file) {
+          if (!confirm("Aucune photo ajoutée. Es-tu sûr(e) de vouloir valider ?")) return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          gages[index].fait = true;
+          gages[index].photo = file ? evt.target.result : null;
+          sauvegarder();
+          afficherGages();
+        };
+
+        if (file) {
+          reader.readAsDataURL(file);
+        } else {
+          gages[index].fait = true;
+          gages[index].photo = null;
+          sauvegarder();
+          afficherGages();
+        }
+      }
+    });
+
+    chargerPhotos();
+    afficherGages();
+  </script>
 </body>
 </html>
