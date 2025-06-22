@@ -1,140 +1,202 @@
-/********************  LISTES DES GAGES  *********************/
-const LISTES = {
-  tranquilles: [
-    { id: 1,  text: "Un massage de 20 min 👐",                   done: false, photo: null },
-    { id: 2,  text: "Préparer le petit-déj au lit ☕",            done: false, photo: null },
-    { id: 3,  text: "Dire 10 choses que j'aime chez toi 💖",     done: false, photo: null },
-    { id: 4,  text: "Une promenade main dans la main 🌸",        done: false, photo: null }
+// Définitions des gages par catégorie
+const gagesData = {
+  soft: [
+    { texte: "Un massage de 10 minutes" },
+    { texte: "Un bisou dans le cou" },
+    { texte: "Préparer un café" },
+    { texte: "Faire un compliment sincère" },
   ],
   hot: [
-    { id: 101, text: "Baiser fougueux sous la douche 💦",        done: false, photo: null },
-    { id: 102, text: "Tenue sexy toute la soirée 🔥",            done: false, photo: null },
-    { id: 103, text: "Massage sensuel à l'huile 😈",            done: false, photo: null },
-    { id: 104, text: "Jeu de rôle surprise 🙈",                 done: false, photo: null }
-  ]
+    { texte: "Danser collés serrés 2 minutes" },
+    { texte: "Lécher la joue pendant 10 secondes" },
+    { texte: "Un baiser passionné" },
+    { texte: "Faire un câlin langoureux" },
+  ],
 };
 
-const TITRES = { tranquilles: "Gages doux 🥰", hot: "Gages hot 🔥" };
-const LS_PREFIX = "gagesLoveApp-";
+const codes = {
+  soft: ["amour", "rose", "calin"],
+  hot: ["passion", "desir", "feu"],
+};
 
-/********************  VARIABLES GLOBALES  ********************/
-let gages     = [];     // la liste courante
-let listeKey  = "";     // 'tranquilles' ou 'hot'
+// Éléments DOM
+const loginScreen = document.getElementById("login-screen");
+const codeInput = document.getElementById("code-input");
+const codeBtn = document.getElementById("code-btn");
+const codeError = document.getElementById("code-error");
 
-/********************  CONNEXION  *****************************/
-function login() {
-  const code = document.getElementById("password").value.trim().toLowerCase();
+const mainScreen = document.getElementById("main-screen");
+const gagesContainer = document.getElementById("gages");
 
-  if (code === "amour")      listeKey = "tranquilles";
-  else if (code === "passion") listeKey = "hot";
-  else { alert("Mot de passe incorrect 😢\n(pense à « la ville ou on eu notre first kiss » ou « la musique qui nous a marquer pour notres premier fois »)"); return; }
+const gagePopup = document.getElementById("gage-popup");
+const gageContent = document.getElementById("gage-content");
+const backBtn = document.getElementById("back-btn");
 
-  // on fait une copie propre pour ne pas toucher aux listes originales
-  gages = LISTES[listeKey].map(g => ({ ...g }));
+let currentType = null;
+let gages = [];
+let currentGageIndex = null;
 
-  charger();                                      // restaure l’état si déjà sauvegardé
-  document.getElementById("login").style.display = "none";
-  document.getElementById("app").style.display   = "block";
-  document.getElementById("titreListe").textContent = TITRES[listeKey];
-  displayGages();
+// Sauvegarde localStorage (gages + currentType)
+function sauvegarder() {
+  localStorage.setItem("gages", JSON.stringify(gages));
+  localStorage.setItem("type", currentType);
 }
 
-/********************  AFFICHAGE LISTE  ***********************/
-function displayGages() {
-  const ul = document.getElementById("gageList");
-  ul.innerHTML = "";
+// Charge les gages sauvegardés et type
+function charger() {
+  const savedType = localStorage.getItem("type");
+  if (savedType && (savedType === "soft" || savedType === "hot")) {
+    currentType = savedType;
+  }
+  const savedGages = localStorage.getItem("gages");
+  if (savedGages) {
+    try {
+      const savedArray = JSON.parse(savedGages);
+      if (Array.isArray(savedArray) && savedArray.length) {
+        gages = savedArray;
+      }
+    } catch {
+      // ignore erreur JSON
+    }
+  }
+}
 
-  gages.forEach(g => {
-    const li = document.createElement("li");
-    li.innerHTML = `
-      <p class="${g.done ? "done" : ""}" onclick="showGage(${g.id})">${g.text}</p>
-      ${g.photo ? `<img src="${g.photo}" alt="Photo du gage">` : ""}
-      ${!g.done ? `
-        <input type="file" accept="image/*" onchange="savePhoto(event, ${g.id})">
-        <button onclick="validerGage(${g.id}); event.stopPropagation()">Valider</button>
-      ` : ""}
+// Affiche les gages dans la grille principale
+function afficherGages() {
+  gagesContainer.innerHTML = "";
+  gages.forEach((gage, i) => {
+    const div = document.createElement("div");
+    div.className = "gage" + (gage.fait ? " grise" : "");
+    div.innerHTML = `
+      <p>${gage.texte}</p>
+      ${gage.photo ? `<img src="${gage.photo}" alt="Photo du gage" />` : ""}
     `;
-    ul.appendChild(li);
+    div.addEventListener("click", () => {
+      if (gagePopup.classList.contains("hidden")) {
+        ouvrirPopupGage(i);
+      }
+    });
+    gagesContainer.appendChild(div);
   });
 }
 
-/********************  POP-UP DÉTAIL  *************************/
-function showGage(id) {
-  const g = gages.find(x => x.id === id);
-  const box = document.getElementById("modalContent");
-
-  box.innerHTML = `
-    <button class="back" onclick="closeModal()">←</button>
-    <h2>${g.text}</h2>
-    ${g.photo ? `<img src="${g.photo}" alt="Photo">` : ""}
-    ${!g.done ? `
-      <input type="file" accept="image/*" onchange="savePhoto(event, ${g.id})"><br>
-      <button onclick="validerGage(${g.id})">Valider</button>
-    ` : ""}
-    <button onclick="resetGage(${g.id})">Réinitialiser</button>
+// Ouvre la popup détaillée d’un gage avec options
+function ouvrirPopupGage(index) {
+  currentGageIndex = index;
+  const gage = gages[index];
+  gageContent.innerHTML = `
+    <p><strong>${gage.texte}</strong></p>
+    ${gage.photo ? `<img src="${gage.photo}" alt="Photo du gage" />` : ""}
+    <div class="options">
+      <input type="file" accept="image/*" id="photo-input" />
+      <button id="valider-btn">${gage.fait ? "Fait ✅" : "Valider"}</button>
+      <button id="reset-btn">Réinitialiser</button>
+    </div>
   `;
-  document.getElementById("modal").style.display = "flex";
-}
+  gagePopup.classList.remove("hidden");
+  mainScreen.classList.add("hidden");
 
-function closeModal() {
-  document.getElementById("modal").style.display = "none";
-}
+  // Gestion boutons dans popup
+  const photoInput = document.getElementById("photo-input");
+  const validerBtn = document.getElementById("valider-btn");
+  const resetBtn = document.getElementById("reset-btn");
 
-/********************  VALIDER LE GAGE  ***********************/
-function validerGage(id) {
-  const g = gages.find(x => x.id === id);
+  validerBtn.disabled = gage.fait;
 
-  if (!g.photo) {
-    const ok = confirm("Tu n'as pas ajouté de photo 😢\nValider quand même ?");
-    if (!ok) return;
-  }
-  g.done = true;
-  sauvegarder();
-  closeModal();
-  displayGages();
-}
+  validerBtn.onclick = () => {
+    if (gage.fait) return; // déjà validé
 
-/********************  UPLOAD PHOTO  **************************/
-function savePhoto(e, id) {
-  const file = e.target.files[0];
-  if (!file) return;
-
-  const reader = new FileReader();
-  reader.onload = () => {
-    const g = gages.find(x => x.id === id);
-    g.photo = reader.result;
-    sauvegarder();
-    displayGages();
+    if (photoInput.files.length === 0) {
+      if (!confirm("Aucune photo ajoutée. Es-tu sûr(e) de vouloir valider ?")) return;
+      gage.fait = true;
+      gage.photo = null;
+      sauvegarder();
+      fermerPopupGage();
+      afficherGages();
+      return;
+    }
+    const file = photoInput.files[0];
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      gage.fait = true;
+      gage.photo = e.target.result;
+      sauvegarder();
+      fermerPopupGage();
+      afficherGages();
+    };
+    reader.readAsDataURL(file);
   };
-  reader.readAsDataURL(file);
+
+  resetBtn.onclick = () => {
+    const code = prompt("Code pour réinitialiser ce gage ?");
+    if (code && code.toLowerCase() === "josephine") {
+      gage.fait = false;
+      gage.photo = null;
+      sauvegarder();
+      fermerPopupGage();
+      afficherGages();
+    } else {
+      alert("Code incorrect.");
+    }
+  };
 }
 
-/********************  RÉINITIALISER  ************************/
-function resetGage(id) {
-  const code = prompt("Code pour réinitialiser ?");
-  if (code && code.toLowerCase() === "josephine") {
-    const g = gages.find(x => x.id === id);
-    g.done  = false;
-    g.photo = null;
-    sauvegarder();
-    closeModal();
-    displayGages();
-  } else alert("Code incorrect !");
+function fermerPopupGage() {
+  gagePopup.classList.add("hidden");
+  mainScreen.classList.remove("hidden");
+  currentGageIndex = null;
 }
 
-/********************  PERSISTENCE  **************************/
-function sauvegarder() {
-  if (listeKey) localStorage.setItem(LS_PREFIX + listeKey, JSON.stringify(gages));
-}
+// Gestion bouton retour dans popup
+backBtn.onclick = () => {
+  fermerPopupGage();
+};
 
-function charger() {
-  if (!listeKey) return;
-  const data = localStorage.getItem(LS_PREFIX + listeKey);
-  if (data) {
-    const saved = JSON.parse(data);
-    saved.forEach(s => {
-      const g = gages.find(x => x.id === s.id);
-      if (g) Object.assign(g, s);
-    });
+// Gestion bouton code secret
+codeBtn.onclick = () => {
+  const code = codeInput.value.trim().toLowerCase();
+  if (codes.soft.includes(code)) {
+    currentType = "soft";
+  } else if (codes.hot.includes(code)) {
+    currentType = "hot";
+  } else {
+    codeError.classList.remove("hidden");
+    return;
   }
-}
+  codeError.classList.add("hidden");
+  loginScreen.classList.add("hidden");
+  mainScreen.classList.remove("hidden");
+
+  // Initialiser les gages à partir de la catégorie
+  gages = gagesData[currentType].map(g => ({ ...g, fait: false, photo: null }));
+
+  // Charger les faits déjà enregistrés (si localStorage correspond)
+  const saved = localStorage.getItem("gages");
+  if (saved) {
+    try {
+      const savedGages = JSON.parse(saved);
+      if (Array.isArray(savedGages) && savedGages.length === gages.length) {
+        // On garde les faits/photo des gages sauvegardés
+        savedGages.forEach((sg, i) => {
+          if (sg.fait) {
+            gages[i].fait = true;
+            gages[i].photo = sg.photo;
+          }
+        });
+      }
+    } catch {}
+  }
+  sauvegarder();
+  afficherGages();
+  codeInput.value = "";
+};
+
+// Au chargement, si on a une session active, on affiche direct
+window.onload = () => {
+  charger();
+  if (currentType) {
+    loginScreen.classList.add("hidden");
+    mainScreen.classList.remove("hidden");
+    afficherGages();
+  }
+};
