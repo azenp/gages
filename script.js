@@ -63,4 +63,5 @@ function validerGage() {
     alert("Gage validé avec la photo ! 💕");
   }
   retourAccueil();
+  <link rel="icon" href="data:,">
 }
