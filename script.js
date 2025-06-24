@@ -16,20 +16,33 @@ const gages = {
 let codeActuel = "";
 
 function verifierCode() {
-  const code = document.getElementById("codeInput").value;
+  const code = document.getElementById("codeInput").value.trim();
   codeActuel = code;
+
   if (gages[code]) {
     if (gages[code].reset) {
       alert("Gages réinitialisés !");
+      localStorage.clear();
       location.reload();
-    } else {
-      document.getElementById("gageText").innerText = gages[code].texte;
-      document.getElementById("code-entry").style.display = "none";
-      document.getElementById("gages").style.display = "block";
+      return;
     }
+
+    document.getElementById("gageText").innerText = gages[code].texte;
+    document.getElementById("code-entry").style.display = "none";
+    document.getElementById("gages").style.display = "block";
+
+    const gageKey = `gage-${code}`;
+
+    const photoData = localStorage.getItem(`${gageKey}-photo`);
+    if (photoData) {
+      document.getElementById("preview").src = photoData;
+      document.getElementById("preview").style.display = "block";
+    } else {
+      document.getElementById("preview").style.display = "none";
+    }
+
   } else {
-    let indice = gages["amour"].indice;
-    alert(indice);
+    alert(gages["amour"].indice);
   }
 }
 
@@ -37,8 +50,31 @@ function retourAccueil() {
   document.getElementById("gages").style.display = "none";
   document.getElementById("code-entry").style.display = "block";
   document.getElementById("codeInput").value = "";
-  document.getElementById("photoInput").value = null;
-  document.getElementById("preview").style.display = "none";
+}
+
+function validerGage() {
+  const photo = document.getElementById("photoInput").files[0];
+  const gageKey = `gage-${codeActuel}`;
+
+  if (!photo) {
+    const confirmer = confirm("Tu n'as pas ajouté de photo, veux-tu quand même valider le gage ?");
+    if (!confirmer) return;
+  }
+
+  localStorage.setItem(`${gageKey}-valide`, "true");
+
+  if (photo) {
+    const reader = new FileReader();
+    reader.onload = function () {
+      localStorage.setItem(`${gageKey}-photo`, reader.result);
+      document.getElementById("preview").src = reader.result;
+      document.getElementById("preview").style.display = "block";
+      alert("Gage validé avec la photo ! 💕");
+    };
+    reader.readAsDataURL(photo);
+  } else {
+    alert("Gage validé sans photo 💙");
+  }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -53,15 +89,5 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
-
-function validerGage() {
-  const photo = document.getElementById("photoInput").files[0];
-  if (!photo) {
-    const confirmer = confirm("Tu n'as pas ajouté de photo, veux-tu quand même valider le gage ?");
-    if (confirmer) alert("Gage validé ! Merci mon amour 💙");
-  } else {
-    alert("Gage validé avec la photo ! 💕");
-  }
-  retourAccueil();
   <link rel="icon" href="data:,">
 }
