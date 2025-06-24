@@ -40,13 +40,17 @@ function retourAccueil() {
   document.getElementById("preview").style.display = "none";
 }
 
-document.getElementById("photoInput").addEventListener("change", function(e) {
-  const reader = new FileReader();
-  reader.onload = function() {
-    document.getElementById("preview").src = reader.result;
-    document.getElementById("preview").style.display = "block";
-  }
-  reader.readAsDataURL(e.target.files[0]);
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("photoInput").addEventListener("change", function (e) {
+    const reader = new FileReader();
+    reader.onload = function () {
+      document.getElementById("preview").src = reader.result;
+      document.getElementById("preview").style.display = "block";
+    };
+    if (e.target.files[0]) {
+      reader.readAsDataURL(e.target.files[0]);
+    }
+  });
 });
 
 function validerGage() {
@@ -58,3 +62,4 @@ function validerGage() {
     alert("Gage validé avec la photo ! 💕");
   }
   retourAccueil();
+}
