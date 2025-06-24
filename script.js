@@ -1,4 +1,3 @@
-console.log("script chargé");
 const gages = {
   "amour": {
     texte: "Un câlin de 30 secondes 💞",
