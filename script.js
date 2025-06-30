@@ -1,69 +1,56 @@
-const codes = {
-  soft: ["amour", "rose", "calin"],
-  hot: ["passion", "desir", "feu"]
-};
+const loginScreen = document.getElementById("login-screen");
+const mainScreen = document.getElementById("main-screen");
+const codeInput = document.getElementById("code-input");
+const codeSubmit = document.getElementById("code-submit");
+const codeError = document.getElementById("code-error");
+const gagesContainer = document.getElementById("gages");
+const changeCodeBtn = document.getElementById("change-code-btn");
 
-const gagesList = {
-  soft: [
-    { texte: "Un massage de 10 minutes" },
-    { texte: "Un bisou sur la joue" },
-    { texte: "Préparer un chocolat chaud ensemble" }
+const gagesByCode = {
+  rose: [
+    { texte: "Un massage de 10 minutes", type: "soft" },
+    { texte: "Un bisou dans le cou", type: "soft" },
   ],
-  hot: [
-    { texte: "Un baiser langoureux" },
-    { texte: "Danse sensuelle pendant 1 minute" },
-    { texte: "Un câlin très rapproché" }
+  rouge: [
+    { texte: "Danser collés serrés 2 minutes", type: "hot" },
+    { texte: "Lécher la joue pendant 10 secondes", type: "hot" },
   ]
 };
 
-let gages = [];
 let currentType = "";
+let gages = [];
 
-const loginScreen = document.getElementById("login-screen");
-const mainScreen = document.getElementById("main-screen");
-const gagesContainer = document.getElementById("gages");
-const gagePopup = document.getElementById("gage-popup");
-const gageContent = document.getElementById("gage-content");
-
-const codeInput = document.getElementById("code-input");
-const codeBtn = document.getElementById("code-btn");
-const codeError = document.getElementById("code-error");
-const backBtn = document.getElementById("back-btn");
-
-codeBtn.onclick = () => {
+codeSubmit.onclick = () => {
   const code = codeInput.value.trim().toLowerCase();
-
-  if (codes.soft.includes(code)) {
-    currentType = "soft";
-  } else if (codes.hot.includes(code)) {
-    currentType = "hot";
+  if (gagesByCode[code]) {
+    currentType = code;
+    gages = JSON.parse(JSON.stringify(gagesByCode[code])); // clone
+    chargerPhotos();
+    afficherGages();
+    loginScreen.classList.add("hidden");
+    mainScreen.classList.remove("hidden");
+    codeError.classList.add("hidden");
   } else {
     codeError.classList.remove("hidden");
-    return;
   }
+};
 
-  loginScreen.classList.add("hidden");
-  mainScreen.classList.remove("hidden");
+function sauvegarder() {
+  localStorage.setItem("gages-" + currentType, JSON.stringify(gages));
+}
 
-  gages = gagesList[currentType].map(g => ({ ...g }));
-
-  const saved = JSON.parse(localStorage.getItem(`gages-${currentType}`));
-  if (saved) {
-    gages.forEach((g, i) => {
-      if (saved[i]?.fait) {
-        g.fait = true;
-        g.photo = saved[i].photo;
+function chargerPhotos() {
+  const data = localStorage.getItem("gages-" + currentType);
+  if (data) {
+    const anciens = JSON.parse(data);
+    anciens.forEach((old, i) => {
+      if (old.fait) {
+        gages[i].fait = true;
+        gages[i].photo = old.photo;
       }
     });
   }
-
-  afficherGages();
-};
-
-backBtn.onclick = () => {
-  gagePopup.classList.add("hidden");
-  mainScreen.classList.remove("hidden");
-};
+}
 
 function afficherGages() {
   gagesContainer.innerHTML = "";
@@ -72,64 +59,65 @@ function afficherGages() {
     gageDiv.className = "gage" + (gage.fait ? " grise" : "");
     gageDiv.innerHTML = `
       <p>${gage.texte}</p>
+      <input type="file" accept="image/*" class="photo-input" data-index="${index}" />
+      <button data-index="${index}" class="valider">Valider</button>
+      <button data-index="${index}" class="reset">Réinitialiser</button>
       ${gage.photo ? `<img src="${gage.photo}" alt="Photo" />` : ""}
     `;
-    gageDiv.onclick = () => ouvrirPopup(index);
+
     gagesContainer.appendChild(gageDiv);
   });
 }
 
-function ouvrirPopup(index) {
+gagesContainer.addEventListener("click", (e) => {
+  const index = parseInt(e.target.getAttribute("data-index"));
+  if (isNaN(index)) return;
   const gage = gages[index];
+
+  if (e.target.classList.contains("valider")) {
+    const input = document.querySelector(`.photo-input[data-index='${index}']`);
+    const file = input.files[0];
+
+    if (!file) {
+      if (!confirm("Aucune photo ajoutée. Es-tu sûr(e) de vouloir valider ?")) return;
+    }
+
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        gage.fait = true;
+        gage.photo = evt.target.result;
+        sauvegarder();
+        afficherGages();
+      };
+      reader.readAsDataURL(file);
+    } else {
+      gage.fait = true;
+      gage.photo = null;
+      sauvegarder();
+      afficherGages();
+    }
+  }
+
+  if (e.target.classList.contains("reset")) {
+    const code = prompt("Code pour réinitialiser ?");
+    if (code === "josephine") {
+      gage.fait = false;
+      gage.photo = null;
+      sauvegarder();
+      afficherGages();
+    } else {
+      alert("Code incorrect");
+    }
+  }
+});
+
+changeCodeBtn.onclick = () => {
+  codeInput.value = "";
+  currentType = "";
+  gages = [];
+  gagesContainer.innerHTML = "";
   mainScreen.classList.add("hidden");
-  gagePopup.classList.remove("hidden");
-
-  gageContent.innerHTML = `
-    <h2>${gage.texte}</h2>
-    <input type="file" accept="image/*" id="photo-${index}" />
-    <div>
-      <button onclick="validerGage(${index})">Valider</button>
-      <button onclick="reinitialiserGage(${index})">Réinitialiser</button>
-    </div>
-    ${gage.photo ? `<img src="${gage.photo}" alt="Photo" />` : ""}
-  `;
-}
-
-function validerGage(index) {
-  const gage = gages[index];
-  const input = document.getElementById(`photo-${index}`);
-  const file = input.files[0];
-
-  if (!file) {
-    if (!confirm("Aucune photo ajoutée. Valider quand même ?")) return;
-    gage.fait = true;
-    sauvegarderEtRetour();
-    return;
-  }
-
-  const reader = new FileReader();
-  reader.onload = function(evt) {
-    gage.fait = true;
-    gage.photo = evt.target.result;
-    sauvegarderEtRetour();
-  };
-  reader.readAsDataURL(file);
-}
-
-function reinitialiserGage(index) {
-  const code = prompt("Code pour réinitialiser ?");
-  if (code === "josephine") {
-    gages[index].fait = false;
-    gages[index].photo = null;
-    sauvegarderEtRetour();
-  } else {
-    alert("Code incorrect");
-  }
-}
-
-function sauvegarderEtRetour() {
-  localStorage.setItem(`gages-${currentType}`, JSON.stringify(gages));
-  afficherGages();
-  gagePopup.classList.add("hidden");
-  mainScreen.classList.remove("hidden");
-}
+  loginScreen.classList.remove("hidden");
+  codeError.classList.add("hidden");
+};
