@@ -6,11 +6,11 @@ const codeError = document.getElementById("code-error");
 const gagesContainer = document.getElementById("gages");
 const changeCodeBtn = document.getElementById("change-code-btn");
 
-const gagesByCode = {rose: [
+const gagesByCode = {boulogne: [
     { texte: "Un massage de 10 minutes", type: "soft" },
     { texte: "Un bisou dans le cou", type: "soft" },
   ],
-  rouge: [
+  apt: [
     { texte: "Danser collés serrés 2 minutes", type: "hot" },
     { texte: "Lécher la joue pendant 10 secondes", type: "hot" },
   ]
