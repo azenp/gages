@@ -10,19 +10,15 @@
   <div id="login-screen">
     <h1>Bienvenue ❤️</h1>
     <p>Entrez le code secret :</p>
-    <input type="text" id="code-input" />
-    <button id="code-btn">Valider</button>
+    <input type="text" id="code-input" placeholder="Code..." />
+    <button id="code-submit">Valider</button>
     <p id="code-error" class="hidden">Code invalide, réessaye.</p>
   </div>
 
   <div id="main-screen" class="hidden">
     <h1>Mes Gages pour Toi ❤️</h1>
     <div id="gages"></div>
-  </div>
-
-  <div id="gage-popup" class="hidden">
-    <button id="back-btn">← Retour</button>
-    <div id="gage-content"></div>
+    <button id="change-code-btn">🔄 Changer de code</button>
   </div>
 
   <script src="script.js"></script>
