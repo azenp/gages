@@ -1,45 +1,56 @@
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background-color: #e6efff;
+  font-family: 'Arial', sans-serif;
+  background-color: #e6f0ff;
   color: #003366;
   text-align: center;
+  padding: 2em;
 }
 
 .hidden {
   display: none;
 }
 
-input, button {
-  padding: 10px;
-  font-size: 16px;
-  margin-top: 10px;
+#login-screen, #main-screen {
+  max-width: 400px;
+  margin: auto;
+}
+
+input[type="text"], input[type="file"] {
+  padding: 0.5em;
+  width: 90%;
+  margin: 1em 0;
+  border-radius: 5px;
+  border: 1px solid #ccc;
 }
 
 button {
+  padding: 0.5em 1em;
   background-color: #3399ff;
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 5px;
   cursor: pointer;
+  margin: 0.5em;
 }
 
 button:hover {
-  background-color: #007acc;
+  background-color: #287bb5;
 }
 
 .gage {
-  background: #fff;
-  margin: 1em;
+  background: white;
+  margin: 1em 0;
   padding: 1em;
-  border-radius: 20px;
+  border-radius: 15px;
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
   cursor: pointer;
+  transition: transform 0.2s;
   position: relative;
 }
 
 .gage:hover {
-  transform: scale(1.03);
+  transform: scale(1.02);
 }
 
 .gage.grise {
@@ -50,12 +61,4 @@ button:hover {
 .gage img {
   max-width: 100px;
   margin-top: 10px;
-}
-
-.options {
-  margin-top: 1em;
-}
-
-#back-btn {
-  margin-bottom: 1em;
 }
