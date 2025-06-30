@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Gages d'Amour</title>
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -10,9 +10,9 @@
   <div id="login-screen">
     <h1>Bienvenue ❤️</h1>
     <p>Entrez le code secret :</p>
-    <input type="text" id="code-input" placeholder="Code secret" autocomplete="off" />
+    <input type="text" id="code-input" />
     <button id="code-btn">Valider</button>
-    <p id="code-error" class="error hidden">Code invalide, réessaye.</p>
+    <p id="code-error" class="hidden">Code invalide, réessaye.</p>
   </div>
 
   <div id="main-screen" class="hidden">
@@ -21,7 +21,7 @@
   </div>
 
   <div id="gage-popup" class="hidden">
-    <button id="back-btn">&larr; Retour</button>
+    <button id="back-btn">← Retour</button>
     <div id="gage-content"></div>
   </div>
 
