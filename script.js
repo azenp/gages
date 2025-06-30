@@ -6,8 +6,7 @@ const codeError = document.getElementById("code-error");
 const gagesContainer = document.getElementById("gages");
 const changeCodeBtn = document.getElementById("change-code-btn");
 
-const gagesByCode = {
-  rose: [
+const gagesByCode = {rose: [
     { texte: "Un massage de 10 minutes", type: "soft" },
     { texte: "Un bisou dans le cou", type: "soft" },
   ],
