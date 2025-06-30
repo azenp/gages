@@ -46,10 +46,25 @@ const gagesByCode = {boulogne: [
     { texte: "je chante la chançon que tu veux", type: "soft" },
     { texte: "je t'écris un poème", type: "soft" },
     { texte: "je te masse pendant 20 min", type: "soft" },
+    { texte: "tu me coupe les cheveux😢", type: "soft" },
+    { texte: "je te traite comme une pricesse 24H👑", type: "soft" },
+    { texte: "je fais les tâches ménagaires", type: "soft" },
+    { texte: "je regarde 10 films de ton choix🎬", type: "soft" },
+    
   ],
   apt: [
-    { texte: "Danser collés serrés 2 minutes", type: "hot" },
-    { texte: "Lécher la joue pendant 10 secondes", type: "hot" },
+    { texte: "Une nuit torride 🔞", type: "hot" },
+    { texte: "Une féssée👋🍑", type: "hot" },
+      { texte: "je suis menotter", type: "hot" },
+      { texte: "on se déguise", type: "hot" },
+      { texte: "je me déguise", type: "hot" },
+      { texte: "J'ai les yeux bandés🎭", type: "hot" },
+      { texte: "je t'envoi un message sexy dans la jourée🔞", type: "hot" },
+      { texte: "Je pose pour une photo hot dans la position de ton choix", type: "hot" },
+      { texte: "Je réalise un fantasme de ton choix", type: "hot" },
+      { texte: "Je te fais un striptease", type: "hot" },
+      { texte: "Je fais ce que tu veux au lit", type: "hot" },
+      
   ]
 };
 
