@@ -65,6 +65,11 @@ const gagesByCode = {boulogne: [
       { texte: "Je te fais un striptease", type: "hot" },
       { texte: "Je fais ce que tu veux au lit", type: "hot" },
       
+    
+  ],
+  poeme: [
+      { texte: "À toi la fleur des pré que l’on ne vois pas à l’horizon.À toi la fleur à qui on ne fait pas attention.À toi la fleur qui pourrait nous remplir de passion mais que l’on ne prend pas le temps d’attacher notre protection.À toi la fleur qui subit notre pollution.À toi la fleur qui navigue au gré des saisons.À toi la fleur que l’on offre à la fille à qui on a décidé d’avoué notre passion.", type: "poeme" },
+ 
   ]
 };
 
