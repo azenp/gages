@@ -1,7 +1,7 @@
 body {
   margin: 0;
   font-family: 'cursive', sans-serif;
-  background-color: #e6f0ff;
+  background-color: #6495ED;
   color: #003366;
   text-align: center;
   padding: 2em;
@@ -39,7 +39,7 @@ button:hover {
 }
 
 .gage {
-  background: blue;
+  background: white;
   margin: 1em 0;
   padding: 1em;
   border-radius: 15px;
