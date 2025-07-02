@@ -69,8 +69,17 @@ const gagesByCode = {boulogne: [
   ],
   poeme: [
       { texte: "À toi la fleur des pré que l’on ne vois pas à l’horizon.À toi la fleur à qui on ne fait pas attention.À toi la fleur qui pourrait nous remplir de passion mais que l’on ne prend pas le temps d’attacher notre protection.À toi la fleur qui subit notre pollution.À toi la fleur qui navigue au gré des saisons.À toi la fleur que l’on offre à la fille à qui on a décidé d’avoué notre passion.", type: "poeme" },
+      
+  
+  ],
+  calin: [
+      { texte: "si tu vois ce message c'est que tu es tomber sur un ister egg bravoooooo!!!!!! J'ai créé cet ister egg dans la peur que tu ne le trouve jamais, mais c'est pas grave, car même sans ça, je te le dis ou non ça n'a aucun changement sur le fais que je t'aime comme un fou❤️.", type: "isteregg" },
+
+  ],
+17: [
+    { texte: "joyeux anniversaire mon coeur ❤️", type: "17ans" }, 
  
-  ]
+  ],
 };
 
 let currentType = "";
